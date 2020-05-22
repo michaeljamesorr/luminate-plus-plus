@@ -13,7 +13,6 @@ project( luminate )
 include_directories( ./include ./src)
 
 #target
-add_executable( luminate ./src/main.cpp ./src/window.cpp ./src/widget.cpp)
+add_executable( luminate ./src/main.cpp ./src/window.cpp ./src/widget.cpp ./src/utility.cpp)
 
-target_link_libraries( luminate glfw)
-target_link_libraries( luminate GL)
+target_link_libraries( luminate GLEW GLU GL glfw)

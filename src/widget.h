@@ -17,6 +17,7 @@ namespace luminate{
             int h(){return height;}
         protected:
             virtual void drawImpl() = 0;
+            virtual void update() = 0;
             int x_pos;
             int y_pos;
             int width;
