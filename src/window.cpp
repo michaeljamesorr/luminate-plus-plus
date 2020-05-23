@@ -21,12 +21,6 @@ void Window::addWidget(Widget* widget){
     this->widgets.push_back(widget);
 };
 
-static const GLfloat g_vertex_buffer_data[] = {
-    -1.0f, -1.0f, 0.0f,
-    1.0f, -1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-};
-
 void Window::openWindow(){
     glewExperimental = true;
     if( !glfwInit() ){
@@ -55,16 +49,12 @@ void Window::openWindow(){
         return;
     }
 
-    GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);
+    std::vector<Widget*>::iterator it;
+    for(it = this->widgets.begin(); it != this->widgets.end(); it++){
+        (*it)->drawSetup();
+    }
 
     glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, GL_TRUE);
-
-    GLuint vertex_buffer;
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
     GLuint program_ID = LoadShaders("shaders/SimpleVertexShader.glsl", "shaders/SimpleFragmentShader.glsl");
 
@@ -73,13 +63,6 @@ void Window::openWindow(){
         glUseProgram(program_ID);
 
         this->draw();
-
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDisableVertexAttribArray(0);
 
         // Swap buffers
         glfwSwapBuffers(glfw_window);
@@ -100,4 +83,3 @@ void Window::draw(){
 void Window::closeWindow(){
     this->stay_open = false;
 };
-

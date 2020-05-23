@@ -1,5 +1,9 @@
 #ifndef LUMINATE_WIDGET_H
 #define LUMINATE WIDGET_H
+
+#include <GL/glew.h>
+#include <glm/vec3.hpp>
+
 namespace luminate{
 
     class Widget{
@@ -15,9 +19,10 @@ namespace luminate{
             int y(){return y_pos;}
             int w(){return width;}
             int h(){return height;}
+            virtual void drawSetup(){};
         protected:
-            virtual void drawImpl() = 0;
-            virtual void update() = 0;
+            virtual void drawImpl(){};
+            virtual void update(){};
             int x_pos;
             int y_pos;
             int width;
@@ -26,12 +31,24 @@ namespace luminate{
 
     class BlockWidget : public Widget {
         public:
-            BlockWidget(int x_pos, int y_pos, int width, int height);
+            BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 colour);
+            void drawSetup() override;
+        protected:
+            GLuint vertex_array;
+            GLuint vertex_buffer;
+            glm::vec3 colour;
+            void drawImpl() override;
+            void update() override;
+
     };
 
     class TextureWidget : public Widget {
         public:
             TextureWidget(int x_pos, int y_pos, int width, int height, float* data);
+            void drawSetup() override;
+        protected:
+            void drawImpl() override;
+            void update() override;
     };
 
 }
