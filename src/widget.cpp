@@ -8,10 +8,11 @@ void Widget::draw(){
     this->drawImpl();
 };
 
+/* BlockWidget Methods */
 
-BlockWidget::BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 colour, float opacity) 
+BlockWidget::BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity) 
     : Widget(x_pos, y_pos, width, height){
-        this->colour = colour;
+        this->tint = tint;
         this->opacity = opacity;
 };
 
@@ -44,12 +45,13 @@ void set_colour(glm::vec3 tint, float opacity){
 }
 
 void BlockWidget::drawImpl(){
-    set_colour(this->colour, this->opacity);
+    set_colour(this->tint, this->opacity);
     glBindVertexArray(this->vertex_array);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 };
 
-void BlockWidget::update(){
+void BlockWidget::update(){};
 
-};
+/* TextureWidget Methods */
+
