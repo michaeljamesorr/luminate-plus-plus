@@ -1,19 +1,28 @@
-#include <widget.h>
 #include <iostream>
+
+#include <widget.h>
 #include <utility.h>
 
 using namespace luminate;
 
+void set_colour(glm::vec3 tint, float opacity){
+    GLuint programId = GetShaderProgram(0);
+    glUseProgram(programId);
+    GLuint tint_loc = glGetUniformLocation(programId, "tint");
+    GLuint opacity_loc = glGetUniformLocation(programId, "opacity");
+    glUniform3fv(tint_loc, 1, &tint[0]);
+    glUniform1f(opacity_loc, opacity);
+}
+
 void Widget::draw(){
+    set_colour(this->tint, this->opacity);
     this->drawImpl();
 };
 
 /* BlockWidget Methods */
 
 BlockWidget::BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity) 
-    : Widget(x_pos, y_pos, width, height){
-        this->tint = tint;
-        this->opacity = opacity;
+    : Widget(x_pos, y_pos, width, height, tint, opacity){
 };
 
 void BlockWidget::drawSetup(){
@@ -35,17 +44,7 @@ void BlockWidget::drawSetup(){
     glBindVertexArray(0);
 };
 
-void set_colour(glm::vec3 tint, float opacity){
-    GLuint programId = GetShaderProgram(0);
-    glUseProgram(programId);
-    GLuint tint_loc = glGetUniformLocation(programId, "tint");
-    GLuint opacity_loc = glGetUniformLocation(programId, "opacity");
-    glUniform3fv(tint_loc, 1, &tint[0]);
-    glUniform1f(opacity_loc, opacity);
-}
-
 void BlockWidget::drawImpl(){
-    set_colour(this->tint, this->opacity);
     glBindVertexArray(this->vertex_array);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);

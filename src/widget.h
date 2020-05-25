@@ -9,11 +9,13 @@ namespace luminate{
     class Widget{
         public:
             void draw();
-            Widget(int x_pos, int y_pos, int width, int height){
+            Widget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity){
                 this->x_pos = x_pos;
                 this->y_pos = y_pos;
                 this->width = width;
                 this->height = height;
+                this->tint = tint;
+                this->opacity = opacity;
             };
             int x(){return x_pos;}
             int y(){return y_pos;}
@@ -27,6 +29,8 @@ namespace luminate{
             int y_pos;
             int width;
             int height;
+            glm::vec3 tint;
+            float opacity;
     };
 
     class BlockWidget : public Widget {
@@ -36,8 +40,6 @@ namespace luminate{
         protected:
             GLuint vertex_array;
             GLuint vertex_buffer;
-            glm::vec3 tint;
-            float opacity;
             void drawImpl() override;
             void update() override;
 
@@ -45,7 +47,8 @@ namespace luminate{
 
     class TextureWidget : public Widget {
         public:
-            TextureWidget(int x_pos, int y_pos, int width, int height, float* data);
+            TextureWidget(int x_pos, int y_pos, int width, int height,
+                          glm::vec3 tint, float opacity, unsigned char* tex_data);
             void drawSetup() override;
         protected:
             void drawImpl() override;
