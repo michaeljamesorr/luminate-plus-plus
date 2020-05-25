@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <utility.h>
 #include <window.h>
@@ -57,6 +59,12 @@ void Window::openWindow(){
     glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, GL_TRUE);
 
     GLuint program_ID = LoadShaders("shaders/SimpleVertexShader.glsl", "shaders/SimpleFragmentShader.glsl");
+    glUseProgram(program_ID);
+
+    // glm::mat4 projection = glm::mat4(1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, (float)this->width, (float)this->height, 0.0f, -1.0f, 1.0f);
+    GLint projection_loc = glGetUniformLocation(program_ID, "projection");
+    glUniformMatrix4fv(projection_loc, 1, GL_FALSE, &projection[0][0]);
 
     do{
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );

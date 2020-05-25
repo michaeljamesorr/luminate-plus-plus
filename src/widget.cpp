@@ -1,4 +1,5 @@
 #include <widget.h>
+#include <iostream>
 
 using namespace luminate;
 
@@ -12,29 +13,29 @@ BlockWidget::BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 
         this->colour = colour;
 };
 
-static const GLfloat g_vertex_buffer_data[] = {
-    -1.0f, -1.0f, 0.0f,
-    -1.0f, 1.0f, 0.0f,
-    1.0f, -1.0f, 0.0f,
-    1.0f, 1.0f, 0.0f
-};
-
 void BlockWidget::drawSetup(){
     glGenVertexArrays(1, &(this->vertex_array));
     glBindVertexArray(this->vertex_array);
 
+    GLfloat screen_space_vertices[] = {
+        (float)this->x_pos, (float)this->height, 0.0f, // BOTTOM LEFT
+        (float)this->x_pos, (float)this->y_pos, 0.0f, // TOP LEFT
+        (float)this->width, (float)this->height, 0.0f, // BOTTOM RIGHT
+        (float)this->width, (float)this->y_pos, 0.0f, // TOP RIGHT
+    };
+
     glGenBuffers(1, &(this->vertex_buffer));
     glBindBuffer(GL_ARRAY_BUFFER, this->vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(screen_space_vertices), screen_space_vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glBindVertexArray(0);
 };
 
 void BlockWidget::drawImpl(){
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, this->vertex_buffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
+    glBindVertexArray(this->vertex_array);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
 };
 
 void BlockWidget::update(){
