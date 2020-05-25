@@ -9,10 +9,14 @@ using namespace std;
 
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 #include <GL/glew.h>
 
 #include <utility.h>
+
+
+std::vector<GLuint> program_list;
 
 GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
 
@@ -103,7 +107,12 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 	glDeleteShader(VertexShaderID);
 	glDeleteShader(FragmentShaderID);
 
+	program_list.push_back(ProgramID);
+
 	return ProgramID;
 }
 
+GLuint GetShaderProgram(int index){
+	return program_list[index];
+}
 

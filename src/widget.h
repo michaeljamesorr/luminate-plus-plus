@@ -31,12 +31,13 @@ namespace luminate{
 
     class BlockWidget : public Widget {
         public:
-            BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 colour);
+            BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 colour, float opacity);
             void drawSetup() override;
         protected:
             GLuint vertex_array;
             GLuint vertex_buffer;
             glm::vec3 colour;
+            float opacity;
             void drawImpl() override;
             void update() override;
 

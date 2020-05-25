@@ -58,6 +58,9 @@ void Window::openWindow(){
 
     glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, GL_TRUE);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     GLuint program_ID = LoadShaders("shaders/SimpleVertexShader.glsl", "shaders/SimpleFragmentShader.glsl");
     glUseProgram(program_ID);
 

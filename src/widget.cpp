@@ -1,5 +1,6 @@
 #include <widget.h>
 #include <iostream>
+#include <utility.h>
 
 using namespace luminate;
 
@@ -8,9 +9,10 @@ void Widget::draw(){
 };
 
 
-BlockWidget::BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 colour) 
+BlockWidget::BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 colour, float opacity) 
     : Widget(x_pos, y_pos, width, height){
         this->colour = colour;
+        this->opacity = opacity;
 };
 
 void BlockWidget::drawSetup(){
@@ -18,10 +20,10 @@ void BlockWidget::drawSetup(){
     glBindVertexArray(this->vertex_array);
 
     GLfloat screen_space_vertices[] = {
-        (float)this->x_pos, (float)this->height, 0.0f, // BOTTOM LEFT
+        (float)this->x_pos, (float)this->y_pos + (float)this->height, 0.0f, // BOTTOM LEFT
         (float)this->x_pos, (float)this->y_pos, 0.0f, // TOP LEFT
-        (float)this->width, (float)this->height, 0.0f, // BOTTOM RIGHT
-        (float)this->width, (float)this->y_pos, 0.0f, // TOP RIGHT
+        (float)this->x_pos + (float)this->width, (float)this->y_pos + (float)this->height, 0.0f, // BOTTOM RIGHT
+        (float)this->x_pos + (float)this->width, (float)this->y_pos, 0.0f, // TOP RIGHT
     };
 
     glGenBuffers(1, &(this->vertex_buffer));
@@ -32,7 +34,17 @@ void BlockWidget::drawSetup(){
     glBindVertexArray(0);
 };
 
+void set_colour(glm::vec3 tint, float opacity){
+    GLuint programId = GetShaderProgram(0);
+    glUseProgram(programId);
+    GLuint tint_loc = glGetUniformLocation(programId, "tint");
+    GLuint opacity_loc = glGetUniformLocation(programId, "opacity");
+    glUniform3fv(tint_loc, 1, &tint[0]);
+    glUniform1f(opacity_loc, opacity);
+}
+
 void BlockWidget::drawImpl(){
+    set_colour(this->colour, this->opacity);
     glBindVertexArray(this->vertex_array);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
