@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 
+#include <utility.h>
+
 namespace luminate{
 
     class Widget{
@@ -48,7 +50,7 @@ namespace luminate{
     class TextureWidget : public Widget {
         public:
             TextureWidget(int x_pos, int y_pos, int width, int height,
-                          glm::vec3 tint, float opacity, unsigned char* tex_data);
+                          glm::vec3 tint, float opacity, TexData tex_data);
             void drawSetup() override;
         protected:
             void drawImpl() override;
