@@ -16,4 +16,6 @@ typedef struct{
 
 TexData LoadGLTexture(const char * tex_file_path, GLenum wrapping, GLenum filtering);
 
+void BindBlankTexture();
+
 #endif

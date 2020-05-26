@@ -2,11 +2,6 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <utility.h>
 #include <window.h>
 
@@ -23,7 +18,7 @@ void Window::addWidget(Widget* widget){
     this->widgets.push_back(widget);
 };
 
-void Window::openWindow(){
+void Window::initialise(){
     glewExperimental = true;
     if( !glfwInit() ){
         fprintf( stderr, "Failed to initialize GLFW\n" );
@@ -51,11 +46,6 @@ void Window::openWindow(){
         return;
     }
 
-    std::vector<Widget*>::iterator it;
-    for(it = this->widgets.begin(); it != this->widgets.end(); it++){
-        (*it)->drawSetup();
-    }
-
     glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, GL_TRUE);
 
     glEnable(GL_BLEND);
@@ -69,20 +59,31 @@ void Window::openWindow(){
     GLint projection_loc = glGetUniformLocation(program_ID, "projection");
     glUniformMatrix4fv(projection_loc, 1, GL_FALSE, &projection[0][0]);
 
+    this->glfw_window = glfw_window;
+    this->shader_program_id = shader_program_id;
+};
+
+void Window::run(){
+
+    std::vector<Widget*>::iterator it;
+    for(it = this->widgets.begin(); it != this->widgets.end(); it++){
+        (*it)->drawSetup();
+    }
+
     do{
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-        glUseProgram(program_ID);
+        glUseProgram(this->shader_program_id);
 
         this->draw();
 
         // Swap buffers
-        glfwSwapBuffers(glfw_window);
+        glfwSwapBuffers(this->glfw_window);
         glfwPollEvents();
 
     } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(glfw_window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-        glfwWindowShouldClose(glfw_window) == 0 );
-};
+    while( glfwGetKey(this->glfw_window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+        glfwWindowShouldClose(this->glfw_window) == 0 );
+}
 
 void Window::draw(){
     std::vector<Widget*>::iterator it;

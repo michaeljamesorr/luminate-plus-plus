@@ -4,6 +4,9 @@
 #build
 build
 
+#data
+textures
+
 # Prerequisites
 *.d
 

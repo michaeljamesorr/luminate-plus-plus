@@ -18,20 +18,31 @@ void setup_quad(GLuint * vertex_array, GLuint * vertex_buffer, GLfloat* vertices
     glGenVertexArrays(1, vertex_array);
     glBindVertexArray(*vertex_array);
 
+    GLuint tex_buffer;
+    GLfloat tex_coords[] = {
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+    };
+
     glGenBuffers(1, vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, *vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, 4*3*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4*5*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (void*)(3*sizeof(GLfloat)));
     glBindVertexArray(0);
 }
 
 GLfloat* get_screenspace_quad_vertices(int x_pos, int y_pos, int width, int height){
-    GLfloat* screen_space_vertices = new GLfloat[12] {
-        (float)x_pos, (float)y_pos + (float)height, 0.0f, // BOTTOM LEFT
-        (float)x_pos, (float)y_pos, 0.0f, // TOP LEFT
-        (float)x_pos + (float)width, (float)y_pos + (float)height, 0.0f, // BOTTOM RIGHT
-        (float)x_pos + (float)width, (float)y_pos, 0.0f, // TOP RIGHT
+    GLfloat* screen_space_vertices = new GLfloat[20] {
+        // positions                                                     // tex coords
+        (float)x_pos, (float)y_pos + (float)height, 0.0f,                0.0f, 1.0f, // BOTTOM LEFT
+        (float)x_pos, (float)y_pos, 0.0f,                                0.0f, 0.0f, // TOP LEFT
+        (float)x_pos + (float)width, (float)y_pos + (float)height, 0.0f, 1.0f, 1.0f, // BOTTOM RIGHT
+        (float)x_pos + (float)width, (float)y_pos, 0.0f,                 1.0f, 0.0f, // TOP RIGHT
     };
     return screen_space_vertices;
 }
@@ -58,6 +69,7 @@ void BlockWidget::drawSetup(){
 
 void BlockWidget::drawImpl(){
     glBindVertexArray(this->vertex_array);
+    BindBlankTexture();
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 };
@@ -80,6 +92,7 @@ void TextureWidget::drawSetup(){
 
 void TextureWidget::drawImpl(){
     glBindVertexArray(this->vertex_array);
+    glBindTexture(GL_TEXTURE_2D, this->tex_data.tex_id);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 }
