@@ -37,8 +37,11 @@ GLfloat* get_screenspace_quad_vertices(int x_pos, int y_pos, int width, int heig
 }
 
 void Widget::draw(){
-    set_colour(this->tint, this->opacity);
-    this->drawImpl();
+    if(this->visible){
+        set_colour(this->tint, this->opacity);
+        this->drawImpl();
+    }
+    
 };
 
 /* BlockWidget Methods */
@@ -63,3 +66,24 @@ void BlockWidget::update(){};
 
 /* TextureWidget Methods */
 
+TextureWidget::TextureWidget(int x_pos, int y_pos, int width, int height,
+                             glm::vec3 tint, float opacity, TexData tex_data) 
+    : Widget(x_pos, y_pos, width, height, tint, opacity){
+        this->tex_data = tex_data;
+};
+
+void TextureWidget::drawSetup(){
+    GLfloat* screenspace_vertices = get_screenspace_quad_vertices(this->x_pos, this->y_pos,
+                                                                  this->width, this->height);
+    setup_quad(&(this->vertex_array), &(this->vertex_buffer), screenspace_vertices);
+}
+
+void TextureWidget::drawImpl(){
+    glBindVertexArray(this->vertex_array);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+}
+
+void TextureWidget::update(){
+
+}

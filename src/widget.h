@@ -24,6 +24,7 @@ namespace luminate{
             int w(){return width;}
             int h(){return height;}
             virtual void drawSetup(){};
+            void setVisible(bool visible){this->visible = visible;};
         protected:
             virtual void drawImpl(){};
             virtual void update(){};
@@ -33,6 +34,9 @@ namespace luminate{
             int height;
             glm::vec3 tint;
             float opacity;
+            GLuint vertex_array;
+            GLuint vertex_buffer;
+            bool visible = true;
     };
 
     class BlockWidget : public Widget {
@@ -40,8 +44,6 @@ namespace luminate{
             BlockWidget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity);
             void drawSetup() override;
         protected:
-            GLuint vertex_array;
-            GLuint vertex_buffer;
             void drawImpl() override;
             void update() override;
 
@@ -53,6 +55,7 @@ namespace luminate{
                           glm::vec3 tint, float opacity, TexData tex_data);
             void drawSetup() override;
         protected:
+            TexData tex_data;
             void drawImpl() override;
             void update() override;
     };
