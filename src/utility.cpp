@@ -123,8 +123,6 @@ TexData LoadGLTexture(const char * tex_file_path, GLenum wrapping, GLenum filter
     unsigned char* data = stbi_load(tex_file_path, &tex_data.width,
                                     &tex_data.height, &tex_data.nrChannels, 0);
 
-	std::cout << "Image data" << data << std::endl;
-
 	if(data){
 		std::cout << "Binding texture " << tex_file_path << std::endl;
 		glGenTextures(1, &tex_data.tex_id);
@@ -151,7 +149,6 @@ void BindBlankTexture(){
 	if(!initialised){
 		std::cout << "Binding blank texture" << std::endl;
     	glGenTextures(1, &blank_texture);
-		std::cout << "blank tex id " << blank_texture << std::endl;
 		glBindTexture(GL_TEXTURE_2D, blank_texture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
