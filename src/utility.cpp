@@ -118,29 +118,32 @@ GLuint GetShaderProgram(int index){
 	return program_list[index];
 }
 
-TexData LoadGLTexture(const char * tex_file_path, GLenum wrapping, GLenum filtering){
-    TexData tex_data;
-    unsigned char* data = stbi_load(tex_file_path, &tex_data.width,
+TexData LoadImage(const char* tex_file_path){
+	TexData tex_data;
+	stbi_ldr_to_hdr_gamma(1.0f);
+    tex_data.data = stbi_loadf(tex_file_path, &tex_data.width,
                                     &tex_data.height, &tex_data.nrChannels, 0);
-
-	if(data){
-		std::cout << "Binding texture " << tex_file_path << std::endl;
-		glGenTextures(1, &tex_data.tex_id);
-		glBindTexture(GL_TEXTURE_2D, tex_data.tex_id);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);	
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_data.width, 
-					tex_data.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-
-		stbi_image_free(data);
-	} else {
-		std::cout << "Image load failed!" << std::endl;
-	}
 	return tex_data;
+}
+
+void FreeTexData(TexData tex_data){
+	stbi_image_free(tex_data.data);
+}
+
+GLuint LoadGLTexture(TexData texture, GLenum wrapping, GLenum filtering){
+
+	GLuint tex_id;
+	glGenTextures(1, &tex_id);
+	glBindTexture(GL_TEXTURE_2D, tex_id);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, 
+				texture.height, 0, GL_RGB, GL_FLOAT, texture.data);
+	return tex_id;
 }
 
 void BindBlankTexture(){
@@ -154,8 +157,8 @@ void BindBlankTexture(){
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		GLubyte blank_tex_data[] = {255, 255, 255};
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, blank_tex_data);
+		GLfloat blank_tex_data[] = {0.0f, 0.0f, 0.0f};
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_FLOAT, blank_tex_data);
 		initialised = true;
 	}
 	glBindTexture(GL_TEXTURE_2D, blank_texture);

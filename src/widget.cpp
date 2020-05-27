@@ -47,6 +47,15 @@ GLfloat* get_screenspace_quad_vertices(int x_pos, int y_pos, int width, int heig
     return screen_space_vertices;
 }
 
+Widget::Widget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity){
+                this->x_pos = x_pos;
+                this->y_pos = y_pos;
+                this->width = width;
+                this->height = height;
+                this->tint = tint;
+                this->opacity = opacity;
+};
+
 void Widget::draw(){
     if(this->visible){
         set_colour(this->tint, this->opacity);
@@ -82,6 +91,7 @@ TextureWidget::TextureWidget(int x_pos, int y_pos, int width, int height,
                              glm::vec3 tint, float opacity, TexData tex_data) 
     : Widget(x_pos, y_pos, width, height, tint, opacity){
         this->tex_data = tex_data;
+        this->tex_id = LoadGLTexture(tex_data, GL_REPEAT, GL_LINEAR);
 };
 
 void TextureWidget::drawSetup(){
@@ -92,7 +102,7 @@ void TextureWidget::drawSetup(){
 
 void TextureWidget::drawImpl(){
     glBindVertexArray(this->vertex_array);
-    glBindTexture(GL_TEXTURE_2D, this->tex_data.tex_id);
+    glBindTexture(GL_TEXTURE_2D, this->tex_id);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 }

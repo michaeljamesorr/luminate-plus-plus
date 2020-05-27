@@ -8,13 +8,17 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 GLuint GetShaderProgram(int index);
 
 typedef struct{
-    GLuint tex_id;
+    float* data;
     int width;
     int height;
     int nrChannels;
 } TexData;
 
-TexData LoadGLTexture(const char * tex_file_path, GLenum wrapping, GLenum filtering);
+TexData LoadImage(const char* tex_file_path);
+
+void FreeTexData(TexData tex_data);
+
+GLuint LoadGLTexture(TexData texture, GLenum wrapping, GLenum filtering);
 
 void BindBlankTexture();
 

@@ -11,14 +11,8 @@ namespace luminate{
     class Widget{
         public:
             void draw();
-            Widget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity){
-                this->x_pos = x_pos;
-                this->y_pos = y_pos;
-                this->width = width;
-                this->height = height;
-                this->tint = tint;
-                this->opacity = opacity;
-            };
+            Widget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity);
+            Widget(int x_pos, int y_pos, int width, int height, glm::vec3 tint, float opacity, int data);
             int x(){return x_pos;}
             int y(){return y_pos;}
             int w(){return width;}
@@ -55,7 +49,20 @@ namespace luminate{
                           glm::vec3 tint, float opacity, TexData tex_data);
             void drawSetup() override;
         protected:
+            GLuint tex_id;
             TexData tex_data;
+            void drawImpl() override;
+            void update() override;
+    };
+
+    class LineWidget : public Widget {
+        public:
+            LineWidget(int x_pos, int y_pos, int width, int height,
+                       glm::vec3 tint, float opacity, float* data_points, int num_points);
+            void drawSetup() override;
+        protected:
+            float* data_points;
+            int num_points;
             void drawImpl() override;
             void update() override;
     };
