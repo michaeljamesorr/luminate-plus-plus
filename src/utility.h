@@ -14,6 +14,8 @@ typedef struct{
     int nrChannels;
 } TexData;
 
+TexData GetEmptyTexture(int width, int height, int depth);
+
 TexData LoadImage(const char* tex_file_path);
 
 void FreeTexData(TexData tex_data);

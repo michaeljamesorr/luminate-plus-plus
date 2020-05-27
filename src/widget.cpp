@@ -91,7 +91,7 @@ TextureWidget::TextureWidget(int x_pos, int y_pos, int width, int height,
                              glm::vec3 tint, float opacity, TexData tex_data) 
     : Widget(x_pos, y_pos, width, height, tint, opacity){
         this->tex_data = tex_data;
-        this->tex_id = LoadGLTexture(tex_data, GL_REPEAT, GL_LINEAR);
+        this->tex_id = LoadGLTexture(tex_data, GL_REPEAT, GL_NEAREST);
 };
 
 void TextureWidget::drawSetup(){

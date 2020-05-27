@@ -118,6 +118,11 @@ GLuint GetShaderProgram(int index){
 	return program_list[index];
 }
 
+TexData GetEmptyTexture(int width, int height, int depth){
+	TexData out = {new float[width*height*depth], width, height, depth};
+	return out;
+}
+
 TexData LoadImage(const char* tex_file_path){
 	TexData tex_data;
 	stbi_ldr_to_hdr_gamma(1.0f);
@@ -141,8 +146,17 @@ GLuint LoadGLTexture(TexData texture, GLenum wrapping, GLenum filtering){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, 
-				texture.height, 0, GL_RGB, GL_FLOAT, texture.data);
+	GLenum format;
+	if(texture.nrChannels == 1){
+		format = GL_RED;
+		GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
+		glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+	}else{
+		format = GL_RGB;
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, format, texture.width, 
+				texture.height, 0, format, GL_FLOAT, texture.data);
 	return tex_id;
 }
 
