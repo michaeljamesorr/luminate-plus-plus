@@ -6,8 +6,8 @@
 int main() {
     TexData texture1 = LoadImage("textures/skytower.jpg");
     TexData scaled_tex = luminate::nearest_neighbour_scale(texture1, 240,180);
-    //TexData gray_tex = luminate::convert_grayscale(scaled_tex);
-    TexData filtered_tex = luminate::apply_filter(scaled_tex, luminate::FLOW_3, NULL, 0.7f);
+    TexData gray_tex = luminate::convert_grayscale(scaled_tex);
+    TexData filtered_tex = luminate::apply_filter(scaled_tex, luminate::FLOW_3, gray_tex.data, 1.0f);
     luminate::Window window = luminate::Window(1024, 768, "Test Window");
     window.initialise();
     // TexData texture2 = LoadGLTexture("textures/rangitoto.jpg", GL_REPEAT, GL_LINEAR);

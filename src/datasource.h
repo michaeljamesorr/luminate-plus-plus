@@ -8,19 +8,18 @@ namespace luminate{
     class DataSeries{
         public:
             float* data();
-            int width();
-            int height();
-            DataSeries(float data[], int width, int height);
+            int numPoints();
+            DataSeries(float data[], int num_points);
             ~DataSeries();
         private:
             float* data;
-            int width;
-            int height;
+            int num_points;
     };
 
+    template <typename T>
     class DataSource{
         public:
-            DataSeries* getData(){
+            T* getData(){
                 this->has_new_data = false;
                 return this->data;
             };
@@ -31,19 +30,21 @@ namespace luminate{
                 return this->has_new_data;
             }
         protected:
-            DataSeries* data;
+            T* data;
             bool has_new_data = true;
             virtual bool fetch() = 0;
     };
 
-    class TextureDataSource : public DataSource{
+    class TextureDataSource : public DataSource<TexData>{
         public:
             TextureDataSource(TexData texture, FilterKernel filter);
         protected:
+            TexData tex_data;
+            FilterKernel filter;
             bool fetch() override;
     };
 
-    class HistogramDataSource : public DataSource{
+    class HistogramDataSource : public DataSource<DataSeries>{
         public:
             HistogramDataSource(TextureDataSource* tex_data_source, int bins);
         protected:
