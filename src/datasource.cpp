@@ -1,6 +1,8 @@
 #include <datasource.h>
 #include <filter.h>
 
+#include <iostream>
+
 using namespace luminate;
 
 TextureDataSource::TextureDataSource(TexData texture, FilterKernel filter, float* strength_mask, float cutoff)
@@ -15,5 +17,6 @@ TextureDataSource::TextureDataSource(TexData texture, FilterKernel filter)
 
 bool TextureDataSource::fetch(){
     TexData filtered = apply_filter(this->data, this->filter, this->strength_mask, this->cutoff);
-
+    this->data = filtered;
+    return true;
 };

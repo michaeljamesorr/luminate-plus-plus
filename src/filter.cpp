@@ -1,5 +1,7 @@
 #include <filter.h>
 #include <texture.h>
+#include <cassert>
+#include <math.h>
 
 using namespace luminate;
 
@@ -9,6 +11,52 @@ float pixel_luminance(float* rgb_pixel){
 
 float pixel_intensity(float* rgb_pixel){
     return (rgb_pixel[0] + rgb_pixel[1] + rgb_pixel[2])/3;
+}
+
+TexData luminate::invert(TexData texture){
+    int width = texture.getWidth();
+    int height = texture.getHeight();
+    int depth = texture.getDepth();
+    int size = width*height*depth;
+
+    float* data = texture.getData().get();
+
+    float* result = new float[size];
+
+    for(int i = 0; i < size; i++){
+        result[i] = 1.0f - data[i];
+    }
+
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, depth};
+    return out_tex;
+}
+
+TexData combine(TexData tex1, TexData tex2){
+    assert(tex1.getWidth()==tex2.getWidth()
+        && tex1.getHeight()==tex2.getHeight()
+        && tex1.getDepth()==tex2.getDepth());
+
+    int width = tex1.getWidth();
+    int height = tex1.getHeight();
+    int depth = tex1.getDepth();
+    int size = width*height*depth;
+
+    float* data1 = tex1.getData().get();
+    float* data2 = tex2.getData().get();
+
+    float* result = new float[size];
+
+    for(int i = 0; i < size; i++){
+        float sq1 = data1[i]*data1[i];
+        float sq2 = data2[i]*data2[i];
+        float sum = sq1 + sq2;
+        result[i] = sqrt(sum);
+    }
+
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, depth};
+    return out_tex;
 }
 
 TexData luminate::apply_filter(TexData texture, FilterKernel kernel){
@@ -102,7 +150,14 @@ TexData luminate::nearest_neighbour_scale(TexData texture, int width, int height
 };
 
 TexData luminate::sobel_edge_detect(TexData texture){
+    TexData G_x1 = apply_filter(texture, SOBEL_EDGE_X1);
+    TexData G_x2 = apply_filter(texture, SOBEL_EDGE_X2);
+    TexData G_y1 = apply_filter(texture, SOBEL_EDGE_Y1);
+    TexData G_y2 = apply_filter(texture, SOBEL_EDGE_Y2);
 
+    TexData G_x = combine(G_x1, G_x2);
+    TexData G_y = combine(G_y1, G_y2);
+    return combine(G_x, G_y);
 };
 
 TexData luminate::convert_grayscale(TexData texture){
@@ -110,7 +165,7 @@ TexData luminate::convert_grayscale(TexData texture){
     int height = texture.getHeight();
     int depth = texture.getDepth();
 
-    float* src_data = &(*texture.getData());
+    float* src_data = texture.getData().get();
     float* result = new float[width*height];
 
     for(int y = 0; y < height; y++){
@@ -120,10 +175,29 @@ TexData luminate::convert_grayscale(TexData texture){
     }
 
     std::shared_ptr<float> result_ptr(result);
-    TexData out_tex = {result_ptr, width, height, depth};
+    TexData out_tex = {result_ptr, width, height, 1};
     return out_tex;
 };
 
 TexData luminate::onebit_posterize(TexData texture, float threshold){
+    int width = texture.getWidth();
+    int height = texture.getHeight();
+    int depth = texture.getDepth();
 
+    float* src_data = texture.getData().get();
+    float* result = new float[width*height];
+
+    for(int y = 0; y < height; y++){
+        for(int x = 0; x < width; x++){
+            if(pixel_intensity(&src_data[y*width*depth + x*depth]) > threshold){
+                result[y*width + x] = 1.0f;
+            }else{
+                result[y*width + x] = 0.0f;
+            }
+        }
+    }
+
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, 1};
+    return out_tex;
 };

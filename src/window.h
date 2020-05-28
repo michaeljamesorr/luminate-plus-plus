@@ -29,6 +29,7 @@ namespace luminate{
             GLFWwindow * glfw_window;
             GLuint shader_program_id;
             void draw();
+            void update();
     };
 }
 #endif

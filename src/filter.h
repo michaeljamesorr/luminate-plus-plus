@@ -16,6 +16,21 @@ namespace luminate{
     static const FilterKernel SIMPLE_EDGE_DETECT = {new float[9]{-1, -1, -1,
                                                                  -1,  8, -1,
                                                                  -1, -1, -1}, 1};
+    static const FilterKernel SOBEL_EDGE_X1 = {new float[9]{ 1,  0, -1,
+                                                             2,  0, -2,
+                                                             1,  0, -1}, 1};
+    static const FilterKernel SOBEL_EDGE_X2 = {new float[9]{-1,  0,  1,
+                                                            -2,  0,  2,
+                                                            -1,  0,  1}, 1};                                                            
+    static const FilterKernel SOBEL_EDGE_Y1 = {new float[9]{ 1,  2,  1,
+                                                             0,  0,  0,
+                                                            -1, -2, -1}, 1};
+    static const FilterKernel SOBEL_EDGE_Y2 = {new float[9]{-1, -2, -1,
+                                                             0,  0,  0,
+                                                             1,  2,  1}, 1};
+    
+
+
     static const FilterKernel FLOW_3 = {new float[9]{1.0f/6.0f, 2.0f/6.0f, 1.0f/6.0f,
                                                      2.0f/6.0f, 4.0f/6.0f, 2.0f/6.0f,
                                                      1.0f/6.0f, 2.0f/6.0f, 1.0f/6.0f}, 1};
@@ -31,6 +46,7 @@ namespace luminate{
 
     TexData onebit_posterize(TexData texture, float threshold);
 
+    TexData invert(TexData texture);
 }
 
 #endif

@@ -71,6 +71,8 @@ void Window::run(){
     }
 
     do{
+        this->update();
+        
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram(this->shader_program_id);
 
@@ -89,6 +91,13 @@ void Window::draw(){
     std::vector<Widget*>::iterator it;
     for(it = this->widgets.begin(); it != this->widgets.end(); it++){
         (*it)->draw();
+    }
+};
+
+void Window::update(){
+    std::vector<Widget*>::iterator it;
+    for(it = this->widgets.begin(); it != this->widgets.end(); it++){
+        (*it)->update();
     }
 };
 

@@ -90,9 +90,17 @@ void BlockWidget::update(){};
 
 TextureWidget::TextureWidget(int x_pos, int y_pos, int width, int height,
                              glm::vec3 tint, float opacity, TexData tex_data) 
-    : Widget(x_pos, y_pos, width, height, tint, opacity), tex_data(tex_data){
+    : Widget(x_pos, y_pos, width, height, tint, opacity), tex_data(tex_data), tex_data_source(NULL){
         this->tex_id = GetGLTexID();
         this->tex_data.bindToGL(tex_id, GL_REPEAT, GL_NEAREST);
+};
+
+TextureWidget::TextureWidget(int x_pos, int y_pos, int width, int height,
+                             glm::vec3 tint, float opacity, TextureDataSource* tex_data_source) 
+    : Widget(x_pos, y_pos, width, height, tint, opacity), tex_data(tex_data_source->getData()){
+        this->tex_id = GetGLTexID();
+        this->tex_data.bindToGL(tex_id, GL_REPEAT, GL_NEAREST);
+        this->tex_data_source = tex_data_source;
 };
 
 void TextureWidget::drawSetup(){
@@ -109,5 +117,12 @@ void TextureWidget::drawImpl(){
 }
 
 void TextureWidget::update(){
-
+    if(tex_data_source){
+        tex_data_source->update();
+        if(tex_data_source->hasNewData()){
+            TexData filtered = tex_data_source->getData();
+            this->tex_data = filtered;
+            this->tex_data.bindToGL(this->tex_id, GL_REPEAT, GL_NEAREST);
+        }
+    }
 }
