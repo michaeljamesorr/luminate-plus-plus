@@ -158,6 +158,16 @@ glm::ivec2* GetRandomIntPoints(int num_points, int min_x, int max_x, int min_y, 
 	return points;
 };
 
+float* GetRandomFloats(int num){
+	srand(time(NULL));
+	float* floats = new float[num];
+
+	for(int i = 0; i < num; i++){
+		floats[i] = rand();
+	}
+	return floats;
+}
+
 glm::vec3* GetRandomColours(int num_colours){
 	srand(time(NULL));
 	glm::vec3* colours = new glm::vec3[num_colours];

@@ -13,6 +13,8 @@ GLuint GetGLTexID();
 
 void BindBlankTexture();
 
+float* GetRandomFloats(int num);
+
 glm::ivec2* GetRandomIntPoints(int num_points, int min_x, int max_x, int min_y, int max_y);
 
 glm::vec3* GetRandomColours(int num_colours);

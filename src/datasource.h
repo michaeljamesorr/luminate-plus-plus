@@ -8,13 +8,15 @@ namespace luminate{
 
     class DataSeries{
         public:
-            float* getData();
-            int numPoints();
-            DataSeries(float data[], int num_points);
-            ~DataSeries();
+            std::shared_ptr<float> getData(){return data;};
+            int numPoints(){return num_points;};
+            int numLines(){return num_lines;};
+            DataSeries(std::shared_ptr<float> data, int num_points, int num_lines)
+            :data(data), num_points(num_points), num_lines(num_lines){};
         private:
-            float* data;
+            std::shared_ptr<float> data;
             int num_points;
+            int num_lines;
     };
 
     template <typename T>

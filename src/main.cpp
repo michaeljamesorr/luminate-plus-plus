@@ -27,9 +27,9 @@ int main() {
     std::shared_ptr<float> canvas_ptr(canvas);
     TexData canvas_tex(canvas_ptr, scale_x, scale_y, 3);
 
-    int num_points = 20;
+    int num_points = 50;
     glm::ivec2* points = GetRandomIntPoints(num_points*2, 0, scale_x-1, 0, scale_y-1);
-    glm::vec3* colours = GetRandomHues(num_points, 0.8f, 0.9f);
+    glm::vec3* colours = GetRandomHues(num_points, 0.7f, 0.8f);
     for(int i = 0; i < num_points; i++){
         setRGBPixel(canvas_tex, points[i].x, points[i].y, ConvertHSVtoRGB(colours[i]));
     }
@@ -44,14 +44,18 @@ int main() {
     // }
 
     TextureDataSource tex_data_source(canvas_tex, luminate::FLOW_3, &(*onebit_tex.getData()), 0.8f);
+    std::shared_ptr<float> data_ptr(GetRandomFloats(200));
+    DataSeries data_series(data_ptr, 50, 4);
     // TexData filtered_tex = apply_filter(scaled_tex, luminate::FLOW_3, &(*gray_tex.getData()), 1.0f);
     Window window = Window(1024, 768, "Test Window");
     window.initialise();
     // TexData texture2 = LoadGLTexture("textures/rangitoto.jpg", GL_REPEAT, GL_LINEAR);
-    window.addWidget(new TextureWidget(0, 0, 1024, 768,
+    window.addWidget(new TextureWidget(0, 0, 1024, 568,
                      glm::vec3(0.0f), 1.0f, &tex_data_source));
-    window.addWidget(new TextureWidget(0, 0, 1024, 768,
+    window.addWidget(new TextureWidget(0, 0, 1024, 568,
                      glm::vec3(0.0f), 0.5f, onebit_tex));
+    window.addWidget(new LineWidget(0, 568, 1024, 200,
+                     glm::vec3(1.0f), 1.0f, data_series));
     window.run();
     return 0;
 }
