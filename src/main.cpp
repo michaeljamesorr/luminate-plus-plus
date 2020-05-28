@@ -19,13 +19,15 @@ int main() {
     TexData gray_tex = convert_grayscale(scaled_tex);
     TexData edge_tex = sobel_edge_detect(gray_tex);
     TexData onebit_tex = onebit_posterize(edge_tex, 0.95f);
+    // onebit_tex = binary_erosion(onebit_tex);
+    // onebit_tex = binary_dilation(onebit_tex);
     onebit_tex = invert(onebit_tex);
     
     float* canvas = new float[scale_x*scale_y*3]{0};
     std::shared_ptr<float> canvas_ptr(canvas);
     TexData canvas_tex(canvas_ptr, scale_x, scale_y, 3);
 
-    int num_points = 10;
+    int num_points = 20;
     glm::ivec2* points = GetRandomIntPoints(num_points*2, 0, scale_x-1, 0, scale_y-1);
     glm::vec3* colours = GetRandomHues(num_points, 0.8f, 0.9f);
     for(int i = 0; i < num_points; i++){
@@ -41,7 +43,7 @@ int main() {
     //                 points[2*i+1].x, points[2*i+1].y, ConvertHSVtoRGB(colours[i]));
     // }
 
-    TextureDataSource tex_data_source(canvas_tex, luminate::FLOW_3, &(*onebit_tex.getData()), 0.7f);
+    TextureDataSource tex_data_source(canvas_tex, luminate::FLOW_3, &(*onebit_tex.getData()), 0.8f);
     // TexData filtered_tex = apply_filter(scaled_tex, luminate::FLOW_3, &(*gray_tex.getData()), 1.0f);
     Window window = Window(1024, 768, "Test Window");
     window.initialise();

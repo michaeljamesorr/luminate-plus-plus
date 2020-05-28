@@ -46,6 +46,14 @@ namespace luminate{
 
     TexData onebit_posterize(TexData texture, float threshold);
 
+    TexData binary_hit_and_miss(TexData binary_texture, FilterKernel struct_elem);
+
+    TexData binary_erosion(TexData binary_texture);
+
+    TexData binary_dilation(TexData binary_texture);
+
+    TexData binary_thinning(TexData binary_texture);
+
     TexData invert(TexData texture);
 }
 

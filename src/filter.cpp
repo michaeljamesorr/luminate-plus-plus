@@ -212,3 +212,124 @@ TexData luminate::onebit_posterize(TexData texture, float threshold){
     TexData out_tex = {result_ptr, width, height, 1};
     return out_tex;
 };
+
+int pixel_hit_and_miss(TexData binary_texture, int x, int y, FilterKernel struct_elem){
+    int width = binary_texture.getWidth();
+    int height = binary_texture.getHeight();
+    float* data = binary_texture.getData().get();
+
+    int kern_radius = struct_elem.radius;
+    float* kern_weights = struct_elem.weights;
+    int kern_i_len = (2*kern_radius)+1;
+    
+    for(int i = -kern_radius; i < kern_radius+1; i++){
+        for(int j = -kern_radius; j < kern_radius+1; j++){
+            int current_ij = kern_weights[(kern_radius+j)*kern_i_len + kern_radius+i];
+            if(x + i >= 0 && x + i < width && y + j >= 0 && y + j < height){
+                if((int)data[(y+j)*width + (x+i)] != current_ij){
+                    return 0;
+                }
+            }else{
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+TexData luminate::binary_hit_and_miss(TexData binary_texture, FilterKernel struct_elem){
+    int width = binary_texture.getWidth();
+    int height = binary_texture.getHeight();
+    int depth = binary_texture.getDepth();
+
+    assert(depth==1);
+
+    float* src_data = binary_texture.getData().get();
+    float* result = new float[width*height];
+
+    for(int y = 0; y < height; y++){
+        for(int x = 0; x < width; x++){
+            result[y*width + x] = pixel_hit_and_miss(binary_texture, x, y, struct_elem);
+        }
+    }
+
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, 1};
+    return out_tex;
+};
+
+TexData luminate::binary_erosion(TexData binary_texture){
+    int width = binary_texture.getWidth();
+    int height = binary_texture.getHeight();
+    int depth = binary_texture.getDepth();
+    assert(depth==1);
+
+    int* se_weights = new int[9]{1, 1, 1,
+                                 1, 1, 1,
+                                 1, 1, 1};
+    int se_radius = 1;
+    int se_len = 3;
+
+    float* src_data = binary_texture.getData().get();
+    float* result = new float[width*height]{0.0f};
+
+
+    int acc = 0;
+    for(int y = 0; y < height; y++){
+        for(int x = 0; x < width; x++){
+            acc = 0;
+            for(int i = -se_radius; i < se_radius+1; i++){
+                for(int j = -se_radius; j < se_radius+1; j++){
+                    acc += ((int)(src_data[(y+j)*width + x+i])) - se_weights[(se_radius+j)*se_len + se_radius+i];
+                }
+            }
+            if(acc == 0){
+                result[y*width + x] = 1.0f;
+            }
+        }
+    }
+
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, 1};
+    return out_tex;
+};
+
+TexData luminate::binary_dilation(TexData binary_texture){
+    int width = binary_texture.getWidth();
+    int height = binary_texture.getHeight();
+    int depth = binary_texture.getDepth();
+    assert(depth==1);
+
+    int* se_weights = new int[9]{1, 1, 1,
+                                 1, 1, 1,
+                                 1, 1, 1};
+    int se_radius = 1;
+    int se_len = 3;
+
+    float* src_data = binary_texture.getData().get();
+    float* result = new float[width*height]{0.0f};
+
+
+    int acc = 0;
+    for(int y = 0; y < height; y++){
+        for(int x = 0; x < width; x++){
+            acc = 0;
+            for(int i = -se_radius; i < se_radius+1; i++){
+                for(int j = -se_radius; j < se_radius+1; j++){
+                    acc += ((int)(src_data[(y+j)*width + x+i])) * se_weights[(se_radius+j)*se_len + se_radius+i];
+                }
+            }
+            if(acc > 0){
+                result[y*width + x] = 1.0f;
+            }
+        }
+    }
+
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, 1};
+    return out_tex;
+};
+
+TexData luminate::binary_thinning(TexData binary_texture){
+
+};
