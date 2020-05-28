@@ -166,3 +166,43 @@ glm::vec3* GetRandomColours(int num_colours){
 	}
 	return colours;
 };
+
+glm::vec3* GetRandomHues(int num_colours, float saturation, float value){
+	srand(time(NULL));
+	glm::vec3* colours = new glm::vec3[num_colours];
+	for(int i = 0; i < num_colours; i++){
+		colours[i] = glm::vec3((float)rand()/RAND_MAX, saturation, value);
+	}
+	return colours;
+};
+
+glm::vec3 ConvertHSVtoRGB(glm::vec3 hsv_colour){
+
+	float h = hsv_colour.x;
+	float s = hsv_colour.y;
+	float v = hsv_colour.z;
+
+	if(s == 0.0f){
+		return glm::vec3(hsv_colour.z);
+	}
+	int i = (int)(h*6);
+	float f = (h*6)-i;
+	float p = v*(1.0f-s);
+	float q = v*(1.0f-s*f);
+	float t = v*(1.0f-s*(1.0f-f));
+    i %= 6;
+	switch (i){
+		case 0:
+			return glm::vec3(v, t, p);
+		case 1:
+			return glm::vec3(q, v, p);
+		case 2:
+			return glm::vec3(p, v, t);
+		case 3:
+			return glm::vec3(p, q, v);
+		case 4:
+			return glm::vec3(t, p, v);
+		case 5:
+			return glm::vec3(v, p, q);
+	}
+}

@@ -17,4 +17,8 @@ glm::ivec2* GetRandomIntPoints(int num_points, int min_x, int max_x, int min_y, 
 
 glm::vec3* GetRandomColours(int num_colours);
 
+glm::vec3* GetRandomHues(int num_colours, float saturation, float value);
+
+glm::vec3 ConvertHSVtoRGB(glm::vec3 hsv_colour);
+
 #endif
