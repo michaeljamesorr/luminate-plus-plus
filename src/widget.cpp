@@ -137,23 +137,28 @@ void setup_lines(GLuint * vertex_array, GLuint * vertex_buffer, GLfloat* vertice
 
     glGenBuffers(1, vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, *vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, num_vertices*3*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_vertices*5*sizeof(GLfloat), vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (void*)(3*sizeof(GLfloat)));
     glBindVertexArray(0);
 }
 
 LineWidget::LineWidget(int x_pos, int y_pos, int width, int height,
-                       glm::vec3 tint, float opacity, DataSeries data_series) 
+                       glm::vec3 tint, float opacity, DataSeries data_series, glm::vec3* colours) 
             : Widget(x_pos, y_pos, width, height, tint, opacity),
-              data_series(data_series), series_data_source(NULL){};
+              data_series(data_series), series_data_source(NULL),
+              colours(colours){};
 
 LineWidget::LineWidget(int x_pos, int y_pos, int width, int height,
-                       glm::vec3 tint, float opacity, DataSource<DataSeries>* series_data_source) 
+                       glm::vec3 tint, float opacity, DataSource<DataSeries>* series_data_source, glm::vec3* colours) 
             : Widget(x_pos, y_pos, width, height, tint, opacity),
-              data_series(series_data_source->getData()), series_data_source(series_data_source){};
+              data_series(series_data_source->getData()), series_data_source(series_data_source),
+              colours(colours){};
 
 void LineWidget::drawSetup(){
+    //TODO Line drawing is unreliable
     DataSeries data_series = this->data_series;
     float* data = this->data_series.getData().get();
     int num_points = this->data_series.numPoints();
@@ -176,15 +181,15 @@ void LineWidget::drawSetup(){
         data[i] = (float)(this->y_pos+this->height) - (((data[i] - min)*scaleBy)*this->height);
     }
 
-    GLfloat* screenspace_vertices = new float[num_points*num_lines*3];
+    GLfloat* screenspace_vertices = new float[num_points*num_lines*5]{0};
 
     float x_coord;
-    float dx = ((float)this->width)/num_points;
+    float dx = ((float)this->width)/(num_points-1);
     for(int i = 0; i < num_lines; i++){
         x_coord = 0;
         for(int j = 0; j < num_points; j++){
-            screenspace_vertices[i*num_points*3+j*3+1] = data[i*num_points+j];
-            screenspace_vertices[i*num_points*3+j*3] = this->x_pos + x_coord;
+            screenspace_vertices[i*num_points*5+j*5+1] = data[i*num_points+j];
+            screenspace_vertices[i*num_points*5+j*5] = this->x_pos + x_coord;
             x_coord += dx;
         }
     }
@@ -195,9 +200,10 @@ void LineWidget::drawSetup(){
 void LineWidget::drawImpl(){
     glBindVertexArray(this->vertex_array);
     BindBlankTexture();
-    glLineWidth(3);
+    glLineWidth(10);
     int num_points = this->data_series.numPoints();
     for(int i = 0; i < this->data_series.numLines(); i++){
+        set_colour(this->colours[i], this->opacity);
         glDrawArrays(GL_LINE_STRIP, i*num_points, num_points);
     }
     glBindVertexArray(0);

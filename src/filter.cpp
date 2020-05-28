@@ -5,7 +5,7 @@
 
 using namespace luminate;
 
-float pixel_luminance(float* rgb_pixel){
+float luminate::pixel_luminance(float* rgb_pixel){
     return 0.2989 * rgb_pixel[0] + 0.5870* rgb_pixel[1] + 0.1140 * rgb_pixel[2];
 }
 

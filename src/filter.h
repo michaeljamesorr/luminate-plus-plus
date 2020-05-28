@@ -55,6 +55,8 @@ namespace luminate{
     TexData binary_thinning(TexData binary_texture);
 
     TexData invert(TexData texture);
+
+    float pixel_luminance(float* rgb_pixel);
 }
 
 #endif

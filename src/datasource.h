@@ -52,11 +52,14 @@ namespace luminate{
 
     class HistogramDataSource : public DataSource<DataSeries>{
         public:
-            HistogramDataSource(TextureDataSource tex_data_source, int bins);
+            HistogramDataSource(TextureDataSource* tex_data_source, int bins);
         protected:
-            TextureDataSource tex_data_source;
+            TextureDataSource* tex_data_source;
             bool fetch() override;
+            int bins;
     };
+
+    DataSeries getPixelHistogram(TexData texture, int bins);
 
 }
 #endif

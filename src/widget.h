@@ -63,15 +63,16 @@ namespace luminate{
     class LineWidget : public Widget {
         public:
             LineWidget(int x_pos, int y_pos, int width, int height,
-                       glm::vec3 tint, float opacity, DataSeries data_series);
+                       glm::vec3 tint, float opacity, DataSeries data_series, glm::vec3* colours);
             LineWidget(int x_pos, int y_pos, int width, int height,
-                       glm::vec3 tint, float opacity, DataSource<DataSeries>* series_data_source);
+                       glm::vec3 tint, float opacity, DataSource<DataSeries>* series_data_source, glm::vec3* colours);
             void drawSetup() override;
             void update() override;
         protected:
             DataSeries data_series;
             DataSource<DataSeries>* series_data_source;
             void drawImpl() override;
+            glm::vec3* colours;
     };
 
 }
