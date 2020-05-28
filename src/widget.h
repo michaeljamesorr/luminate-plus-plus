@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 
 #include <utility.h>
+#include <texture.h>
 
 namespace luminate{
 

@@ -12,8 +12,6 @@ using namespace std;
 #include <vector>
 
 #include <GL/glew.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 
 #include <utility.h>
 
@@ -118,45 +116,9 @@ GLuint GetShaderProgram(int index){
 	return program_list[index];
 }
 
-TexData GetEmptyTexture(int width, int height, int depth){
-	TexData out = {new float[width*height*depth], width, height, depth};
-	return out;
-}
-
-TexData LoadImage(const char* tex_file_path){
-	TexData tex_data;
-	stbi_ldr_to_hdr_gamma(1.0f);
-    tex_data.data = stbi_loadf(tex_file_path, &tex_data.width,
-                                    &tex_data.height, &tex_data.nrChannels, 0);
-	return tex_data;
-}
-
-void FreeTexData(TexData tex_data){
-	stbi_image_free(tex_data.data);
-}
-
-GLuint LoadGLTexture(TexData texture, GLenum wrapping, GLenum filtering){
-
+GLuint GetGLTexID(){
 	GLuint tex_id;
 	glGenTextures(1, &tex_id);
-	glBindTexture(GL_TEXTURE_2D, tex_id);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
-
-	GLenum format;
-	if(texture.nrChannels == 1){
-		format = GL_RED;
-		GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
-		glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
-	}else{
-		format = GL_RGB;
-	}
-
-	glTexImage2D(GL_TEXTURE_2D, 0, format, texture.width, 
-				texture.height, 0, format, GL_FLOAT, texture.data);
 	return tex_id;
 }
 

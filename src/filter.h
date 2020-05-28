@@ -1,7 +1,7 @@
 #ifndef LUMINATE_FILTER_H
 #define LUMINATE_FILTER_H
 
-#include "utility.h"
+#include <texture.h>
 
 namespace luminate{
 

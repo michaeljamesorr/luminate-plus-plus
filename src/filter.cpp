@@ -1,4 +1,7 @@
 #include <filter.h>
+#include <texture.h>
+
+using namespace luminate;
 
 float pixel_luminance(float* rgb_pixel){
     return 0.2989 * rgb_pixel[0] + 0.5870* rgb_pixel[1] + 0.1140 * rgb_pixel[2];
@@ -14,13 +17,13 @@ TexData luminate::apply_filter(TexData texture, FilterKernel kernel){
 
 TexData luminate::apply_filter(TexData texture, FilterKernel kernel, float* strength_mask, float cutoff){
 
-    int tex_x_len = texture.width;
-    int tex_y_len = texture.height;
-    int tex_depth = texture.nrChannels;
+    int tex_x_len = texture.getWidth();
+    int tex_y_len = texture.getHeight();
+    int tex_depth = texture.getDepth();
     int kern_radius = kernel.radius;
     int kern_i_len = (2*kern_radius)+1;
 
-    float* tex_data = texture.data;
+    float* tex_data = &(*texture.getData());
     float* kern_weights = kernel.weights;
 
     float* result = new float[tex_x_len*tex_y_len*tex_depth];
@@ -66,19 +69,20 @@ TexData luminate::apply_filter(TexData texture, FilterKernel kernel, float* stre
         }
     }
 
-    TexData out_tex = {result, tex_x_len, tex_y_len, tex_depth};
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, tex_x_len, tex_y_len, tex_depth};
     return out_tex;
 };
 
 TexData luminate::nearest_neighbour_scale(TexData texture, int width, int height){
-    int src_width = texture.width;
-    int src_height = texture.height;
-    int depth = texture.nrChannels;
+    int src_width = texture.getWidth();
+    int src_height = texture.getHeight();
+    int depth = texture.getDepth();
 
     float x_scale = ((float)src_width)/((float)width);
     float y_scale = ((float)src_height)/((float)height);
 
-    float* src_data = texture.data;
+    float* src_data = &(*texture.getData());
     float* result = new float[width*height*depth];
 
     for(int y = 0; y < height; y++){
@@ -92,7 +96,8 @@ TexData luminate::nearest_neighbour_scale(TexData texture, int width, int height
         }
     }
 
-    TexData out_tex = {result, width, height, depth};
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, depth};
     return out_tex;
 };
 
@@ -101,11 +106,11 @@ TexData luminate::sobel_edge_detect(TexData texture){
 };
 
 TexData luminate::convert_grayscale(TexData texture){
-    int width = texture.width;
-    int height = texture.height;
-    int depth = texture.nrChannels;
+    int width = texture.getWidth();
+    int height = texture.getHeight();
+    int depth = texture.getDepth();
 
-    float* src_data = texture.data;
+    float* src_data = &(*texture.getData());
     float* result = new float[width*height];
 
     for(int y = 0; y < height; y++){
@@ -114,7 +119,8 @@ TexData luminate::convert_grayscale(TexData texture){
         }
     }
 
-    TexData out_tex = {result, width, height, 1};
+    std::shared_ptr<float> result_ptr(result);
+    TexData out_tex = {result_ptr, width, height, depth};
     return out_tex;
 };
 

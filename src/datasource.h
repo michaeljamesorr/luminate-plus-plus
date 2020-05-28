@@ -1,13 +1,14 @@
 #ifndef LUMINATE_DATASOURCE_H
 #define LUMINATE_DATASOURCE_H
 
-#include "filter.h"
+#include <texture.h>
+#include <filter.h>
 
 namespace luminate{
 
     class DataSeries{
         public:
-            float* data();
+            float* getData();
             int numPoints();
             DataSeries(float data[], int num_points);
             ~DataSeries();
@@ -19,7 +20,8 @@ namespace luminate{
     template <typename T>
     class DataSource{
         public:
-            T* getData(){
+            DataSource(T data): data(data){};
+            T getData(){
                 this->has_new_data = false;
                 return this->data;
             };
@@ -30,7 +32,7 @@ namespace luminate{
                 return this->has_new_data;
             }
         protected:
-            T* data;
+            T data;
             bool has_new_data = true;
             virtual bool fetch() = 0;
     };
@@ -38,17 +40,19 @@ namespace luminate{
     class TextureDataSource : public DataSource<TexData>{
         public:
             TextureDataSource(TexData texture, FilterKernel filter);
+            TextureDataSource(TexData texture, FilterKernel filter, float* strength_mask, float cutoff);
         protected:
-            TexData tex_data;
             FilterKernel filter;
+            float* strength_mask;
+            float cutoff;
             bool fetch() override;
     };
 
     class HistogramDataSource : public DataSource<DataSeries>{
         public:
-            HistogramDataSource(TextureDataSource* tex_data_source, int bins);
+            HistogramDataSource(TextureDataSource tex_data_source, int bins);
         protected:
-            TextureDataSource* tex_data_source;
+            TextureDataSource tex_data_source;
             bool fetch() override;
     };
 
