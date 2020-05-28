@@ -10,6 +10,7 @@ using namespace std;
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
+#include <random>
 
 #include <GL/glew.h>
 
@@ -139,3 +140,29 @@ void BindBlankTexture(){
 	}
 	glBindTexture(GL_TEXTURE_2D, blank_texture);
 }
+
+glm::ivec2* GetRandomIntPoints(int num_points, int min_x, int max_x, int min_y, int max_y){
+	static std::random_device rd;
+	static std::mt19937 rng(rd());
+	std::uniform_int_distribution<int> x_gen(min_x, max_x);
+	std::uniform_int_distribution<int> y_gen(min_y, max_y);
+
+	glm::ivec2* points = new glm::ivec2[num_points];
+
+	for(int i = 0; i < num_points; i++){
+		int x = x_gen(rng);
+		int y = y_gen(rng);
+		points[i] = glm::ivec2(x, y);
+	}
+
+	return points;
+};
+
+glm::vec3* GetRandomColours(int num_colours){
+	srand(time(NULL));
+	glm::vec3* colours = new glm::vec3[num_colours];
+	for(int i = 0; i < num_colours; i++){
+		colours[i] = glm::vec3(rand(), rand(), rand());
+	}
+	return colours;
+};
