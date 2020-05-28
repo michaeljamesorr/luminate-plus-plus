@@ -23,14 +23,14 @@ int main() {
     std::shared_ptr<float> canvas_ptr(canvas);
     TexData canvas_tex(canvas_ptr, scale_x, scale_y, 3);
 
-    int num_random_points = 100;
-    glm::ivec2* points = GetRandomIntPoints(num_random_points, 0, scale_x-1, 0, scale_y-1);
-    glm::vec3* colours = GetRandomColours(num_random_points);
-    for(int i = 0; i < num_random_points; i++){
-        setRGBPixel(canvas_tex, points[i].x, points[i].y, colours[i]);
+    int num_lines = 10;
+    glm::ivec2* points = GetRandomIntPoints(num_lines*2, 0, scale_x-1, 0, scale_y-1);
+    glm::vec3* colours = GetRandomColours(num_lines);
+    for(int i = 0; i < num_lines; i++){
+        drawRGBLine(canvas_tex, points[2*i].x, points[2*i].y, points[2*i+1].x, points[2*i+1].y, colours[i]);
     }
 
-    TextureDataSource tex_data_source(canvas_tex, luminate::FLOW_3, &(*onebit_tex.getData()), 1.0f);
+    TextureDataSource tex_data_source(canvas_tex, luminate::FLOW_3, &(*onebit_tex.getData()), 0.7f);
     // TexData filtered_tex = apply_filter(scaled_tex, luminate::FLOW_3, &(*gray_tex.getData()), 1.0f);
     Window window = Window(1024, 768, "Test Window");
     window.initialise();

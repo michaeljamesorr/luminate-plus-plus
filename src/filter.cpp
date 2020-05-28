@@ -13,6 +13,16 @@ float pixel_intensity(float* rgb_pixel){
     return (rgb_pixel[0] + rgb_pixel[1] + rgb_pixel[2])/3;
 }
 
+void clip_intensity(float* rgb_pixel, float max_intensity){
+    float intensity = pixel_intensity(rgb_pixel);
+    if(intensity > max_intensity){
+        float ratio = max_intensity / intensity;
+        for(int k = 0; k < 3; k++){
+            rgb_pixel[k] = rgb_pixel[k]*ratio;
+        }
+    }
+}
+
 TexData luminate::invert(TexData texture){
     int width = texture.getWidth();
     int height = texture.getHeight();
@@ -106,6 +116,7 @@ TexData luminate::apply_filter(TexData texture, FilterKernel kernel, float* stre
                         }
                     }
                 }
+                clip_intensity(acc, cutoff);
                 for(int k = 0; k < tex_depth; k++){
                     result[(y)*tex_x_len*tex_depth + (x)*tex_depth + k] = acc[k];
                 }

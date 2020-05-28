@@ -162,7 +162,7 @@ glm::vec3* GetRandomColours(int num_colours){
 	srand(time(NULL));
 	glm::vec3* colours = new glm::vec3[num_colours];
 	for(int i = 0; i < num_colours; i++){
-		colours[i] = glm::vec3(rand(), rand(), rand());
+		colours[i] = glm::vec3(rand()/2, rand()/2, rand()/2);
 	}
 	return colours;
 };
