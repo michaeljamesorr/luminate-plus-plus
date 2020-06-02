@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -58,4 +59,77 @@ void TexData::bindToGL(GLuint tex_id, GLenum wrapping, GLenum filtering){
 
 	glTexImage2D(GL_TEXTURE_2D, 0, format, this->width, 
 				this->height, 0, format, GL_FLOAT, &(*this->data));
+};
+
+void TexData::clampValues(){
+
+	float* data = this->data.get();
+
+	int width = this->width;
+	int height = this->height;
+	int depth = this->depth;
+
+	for(int i = 0; i < width*height*depth; i++){
+		data[i] = std::max(0.0f, std::min(data[i], 1.0f));
+	}
+}
+
+TexData& TexData::operator+=(const TexData& rhs){
+	assert(this->width == rhs.width && this->height == rhs.height && this->depth == rhs.depth);
+	float* lhs_data = this->data.get();
+	float* rhs_data = rhs.data.get();
+
+	int width = this->width;
+	int height = this->height;
+	int depth = this->depth;
+
+	for(int i = 0; i < width*height*depth; i++){
+		lhs_data[i] += rhs_data[i];
+	}
+
+	return *this;
+};
+
+TexData& TexData::operator*=(const TexData& rhs){
+	assert(this->width == rhs.width && this->height == rhs.height && this->depth == rhs.depth);
+	float* lhs_data = this->data.get();
+	float* rhs_data = rhs.data.get();
+
+	int width = this->width;
+	int height = this->height;
+	int depth = this->depth;
+
+	for(int i = 0; i < width*height*depth; i++){
+		lhs_data[i] *= rhs_data[i];
+	}
+
+	return *this;
+};
+
+TexData& TexData::operator*=(const float rhs){
+	float* lhs_data = this->data.get();
+	
+	int width = this->width;
+	int height = this->height;
+	int depth = this->depth;
+
+	for(int i = 0; i < width*height*depth; i++){
+		lhs_data[i] *= rhs;
+	}
+	
+	return *this;
+};
+
+TexData& TexData::operator+=(const float rhs){
+	float* lhs_data = this->data.get();
+	
+	int width = this->width;
+	int height = this->height;
+	int depth = this->depth;
+
+	for(int i = 0; i < width*height*depth; i++){
+		lhs_data[i] += rhs;
+	}
+	
+	return *this;
 };
