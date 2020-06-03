@@ -53,6 +53,7 @@ namespace luminate{
                           glm::vec3 tint, float opacity, TextureDataSource* tex_data_source);
             void drawSetup() override;
             void update() override;
+            TextureDataSource* getDataSource(){return tex_data_source;};
         protected:
             TextureDataSource* tex_data_source;
             GLuint tex_id;

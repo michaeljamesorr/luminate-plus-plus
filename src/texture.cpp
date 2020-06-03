@@ -74,6 +74,18 @@ void TexData::clampValues(){
 	}
 }
 
+void TexData::clear(){
+	float* data = this->data.get();
+
+	int width = this->width;
+	int height = this->height;
+	int depth = this->depth;
+
+	for(int i = 0; i < width*height*depth; i++){
+		data[i] = 0.0f;
+	}
+}
+
 TexData& TexData::operator+=(const TexData& rhs){
 	assert(this->width == rhs.width && this->height == rhs.height && this->depth == rhs.depth);
 	float* lhs_data = this->data.get();

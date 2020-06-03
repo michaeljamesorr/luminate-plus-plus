@@ -12,6 +12,7 @@ namespace luminate{
             static TexData loadImage(const char* tex_file_path);
             void bindToGL(GLuint tex_id, GLenum wrapping, GLenum filtering);
             void clampValues();
+            void clear();
             int getWidth(){return this->width;};
             int getHeight(){return this->height;};
             int getDepth(){return this->depth;};

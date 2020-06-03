@@ -17,7 +17,7 @@ namespace luminate{
         public:
             KeyHandler(void* params) : params(params) {};
             virtual void key_handler(GLFWwindow* window, int key, int scancode, int action, int mods) = 0;
-        private:
+        protected:
             void* params;
     };
 
@@ -25,7 +25,7 @@ namespace luminate{
         public:
             MouseHandler(void* params) : params(params) {};
             virtual void mouse_handler(GLFWwindow* window, int button, int action, int mods) = 0;
-        private:
+        protected:
             void* params;
     };
 

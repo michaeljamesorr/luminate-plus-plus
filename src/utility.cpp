@@ -158,8 +158,12 @@ glm::ivec2* GetRandomIntPoints(int num_points, int min_x, int max_x, int min_y, 
 	return points;
 };
 
+bool rand_seeded = false;
 float* GetRandomFloats(int num){
-	srand(time(NULL));
+	if(!rand_seeded){
+		srand(time(NULL));
+		rand_seeded = true;
+	}
 	float* floats = new float[num];
 
 	for(int i = 0; i < num; i++){
@@ -169,7 +173,10 @@ float* GetRandomFloats(int num){
 }
 
 glm::vec3* GetRandomColours(int num_colours){
-	srand(time(NULL));
+	if(!rand_seeded){
+		srand(time(NULL));
+		rand_seeded = true;
+	}
 	glm::vec3* colours = new glm::vec3[num_colours];
 	for(int i = 0; i < num_colours; i++){
 		colours[i] = glm::vec3(rand()/2, rand()/2, rand()/2);
@@ -178,7 +185,10 @@ glm::vec3* GetRandomColours(int num_colours){
 };
 
 glm::vec3* GetRandomHues(int num_colours, float saturation, float value){
-	srand(time(NULL));
+	if(!rand_seeded){
+		srand(time(NULL));
+		rand_seeded = true;
+	}
 	glm::vec3* colours = new glm::vec3[num_colours];
 	for(int i = 0; i < num_colours; i++){
 		colours[i] = glm::vec3((float)rand()/RAND_MAX, saturation, value);
