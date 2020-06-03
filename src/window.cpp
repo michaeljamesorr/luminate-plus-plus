@@ -7,6 +7,17 @@
 
 using namespace luminate;
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+    Window* luminate_window = (Window*)glfwGetWindowUserPointer(window);
+    luminate_window->notifyMouseHandlers(window, button, action, mods);
+};
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    Window* luminate_window = (Window*)glfwGetWindowUserPointer(window);
+    luminate_window->notifyKeyHandlers(window, key, scancode, action, mods);
+};
+
+
 Window::Window(int width, int height, const char* title){
     this->stay_open = false;
     this->width = width;
@@ -16,6 +27,28 @@ Window::Window(int width, int height, const char* title){
 
 void Window::addWidget(Widget* widget){
     this->widgets.push_back(widget);
+};
+
+void Window::addKeyHandler(KeyHandler* key_handler){
+    this->key_handlers.push_back(key_handler);
+};
+
+void Window::addMouseHandler(MouseHandler* mouse_handler){
+    this->mouse_handlers.push_back(mouse_handler);
+};
+
+void Window::notifyKeyHandlers(GLFWwindow* window, int key, int scancode, int action, int mods){
+    std::vector<KeyHandler*>::iterator it;
+    for(it = this->key_handlers.begin(); it != this->key_handlers.end(); it++){
+        (*it)->key_handler(window, key, scancode, action, mods);
+    }
+};
+
+void Window::notifyMouseHandlers(GLFWwindow* window, int button, int action, int mods){
+    std::vector<MouseHandler*>::iterator it;
+    for(it = this->mouse_handlers.begin(); it != this->mouse_handlers.end(); it++){
+        (*it)->mouse_handler(window, button, action, mods);
+    }
 };
 
 void Window::initialise(){
@@ -38,6 +71,10 @@ void Window::initialise(){
         glfwTerminate();
         return;
     }
+
+    glfwSetWindowUserPointer(glfw_window, this);
+    glfwSetKeyCallback(glfw_window, key_callback);
+    glfwSetMouseButtonCallback(glfw_window, mouse_button_callback);
 
     glfwMakeContextCurrent(glfw_window);
     glewExperimental = true;
