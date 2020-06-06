@@ -23,7 +23,8 @@ namespace luminate{
     };
 
     /**
-     * Provides access to dynamically changing data.
+     * Provides access to dynamically changing data. An abstract class which should be extended 
+     * to define how new data is fetched.
      */
     template <typename T>
     class DataSource{
@@ -33,15 +34,26 @@ namespace luminate{
                 this->has_new_data = false;
                 return this->data;
             };
+            /**
+             * Update the data if possible.
+             */
             void update(){
                 this->has_new_data = fetch();
             };
+            /**
+             * Indicates that the DataSource has data which has not yet been retrieved 
+             * by calling getData().
+             */
             bool hasNewData(){
                 return this->has_new_data;
             }
         protected:
             T data;
             bool has_new_data = true;
+            /**
+             * Attempt to fetch new data.
+             * @return True if new data was fetched, otherwise false.
+             */
             virtual bool fetch() = 0;
     };
 

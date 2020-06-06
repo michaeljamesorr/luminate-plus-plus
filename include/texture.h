@@ -5,13 +5,35 @@
 #include <GL/glew.h>
 
 namespace luminate{
+
+    /**
+     * Represents a texture and associated data.
+     */
     class TexData{
         public:
+            /**
+             * Constructor producing a blank texture with specified dimension.
+             */
             TexData(int width, int height, int depth);
+            /**
+             * Constructor producing a texture of specified dimensions with the provided data array.
+             */
             TexData(std::shared_ptr<float> data, int width, int height, int depth);
+            /**
+             * Load a texture from an image file.
+             */
             static TexData loadImage(const char* tex_file_path);
+            /**
+             * Bind this texture in OpenGL using the specified GL handle.
+             */
             void bindToGL(GLuint tex_id, GLenum wrapping, GLenum filtering);
+            /**
+             * Clamp all values in the texture to between 0.0 and 1.0.
+             */
             void clampValues();
+            /**
+             * Clear all data, leaving a blank texture.
+             */
             void clear();
             int getWidth(){return this->width;};
             int getHeight(){return this->height;};
