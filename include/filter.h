@@ -5,14 +5,23 @@
 
 namespace luminate{
 
+    /**
+     * A square matrix of floats to be used as an image processing kernel. 
+     */
     typedef struct{
         float* weights;
         int radius;
     } FilterKernel;
 
+    /**
+     * A 3x3 gaussian blur.
+     */
     static const FilterKernel GAUSS_BLUR_3 = {new float[9]{1.0f/16.0f, 2.0f/16.0f, 1.0f/16.0f,
                                                            2.0f/16.0f, 4.0f/16.0f, 2.0f/16.0f,
                                                            1.0f/16.0f, 2.0f/16.0f, 1.0f/16.0f}, 1};
+    /**
+     * 
+     */
     static const FilterKernel SIMPLE_EDGE_DETECT = {new float[9]{-1, -1, -1,
                                                                  -1,  8, -1,
                                                                  -1, -1, -1}, 1};

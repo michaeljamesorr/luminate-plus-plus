@@ -6,6 +6,9 @@
 
 namespace luminate{
 
+    /**
+     * Represents N equal-length series of data points.
+     */
     class DataSeries{
         public:
             std::shared_ptr<float> getData(){return data;};
@@ -19,6 +22,9 @@ namespace luminate{
             int num_lines;
     };
 
+    /**
+     * Provides access to dynamically changing data.
+     */
     template <typename T>
     class DataSource{
         public:
@@ -39,6 +45,9 @@ namespace luminate{
             virtual bool fetch() = 0;
     };
 
+    /**
+     * Provides access to a dynamically changing texture.
+     */
     class TextureDataSource : public DataSource<TexData>{
         public:
             TextureDataSource(TexData texture, FilterKernel filter);
@@ -50,6 +59,10 @@ namespace luminate{
             bool fetch() override;
     };
 
+    /**
+     * Provides access to a dynamically changing DataSeries representing a histogram of the luminance
+     * of pixels from a TextureDataSource.
+     */
     class HistogramDataSource : public DataSource<DataSeries>{
         public:
             HistogramDataSource(TextureDataSource* tex_data_source, int bins);
@@ -59,6 +72,9 @@ namespace luminate{
             int bins;
     };
 
+    /**
+     * Get a 4-channel histogram of the luminance of pixels in a texture.
+     */
     DataSeries getPixelHistogram(TexData texture, int bins);
 
 }

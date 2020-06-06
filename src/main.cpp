@@ -14,11 +14,11 @@ int main() {
     int scale_x = 480;
     int scale_y = 360;
 
-    TexData original_tex = TexData::loadImage("textures/rangitoto.jpg");
+    TexData original_tex = TexData::loadImage("textures/skytower.jpg");
     TexData scaled_tex = nearest_neighbour_scale(original_tex, scale_x, scale_y);
     TexData gray_tex = convert_grayscale(scaled_tex);
     TexData edge_tex = sobel_edge_detect(gray_tex);
-    TexData onebit_tex = onebit_posterize(edge_tex, 0.95f);
+    TexData onebit_tex = onebit_posterize(edge_tex, 0.90f);
     onebit_tex = invert(onebit_tex);
     
     float* canvas = new float[scale_x*scale_y*3]{0};
